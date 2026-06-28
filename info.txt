@@ -1,0 +1,88 @@
+\
+参考文档：
+https://docs.vrchat.com/docs/launch-options
+
+https://docs.unity3d.com/2022.3/Documentation/Manual/PlayerCommandLineArguments.html
+
+--no-vr
+强制桌面模式
+
+--profile=X
+使用不同的用户配置文件启动，其中 X 为数字。0 为默认配置文件。
+
+--fps=X
+将帧率上限设置为 X 而不是默认值。在桌面端，默认值为 90。在 VR 模式下，默认值为头显报告的最大刷新率。
+
+--enable-debug-gui
+启用调试菜单快捷键，快捷键请参见“键盘和鼠标”部分。
+
+--enable-sdk-log-levels
+启用大量额外日志记录功能。
+警告*：这将导致您的日志文件变得非常大！
+启用此选项可能会因日志记录增加而降低性能，请勿启用！
+
+--enable-udon-debug-logging
+在客户端启用 Udon 堆和栈转储。通常仅在编辑器中启用。
+警告*：在出现问题的 Udon 世界中，可能会导致您的日志文件变得非常大！
+启用此选项可能会因日志记录增加而降低性能，请勿启用！
+
+--skip-registry-install
+这样可以防止 VRChat 安装或更新注册表中的信息，并防止“VRChat 安装助手”弹出窗口出现。vrchat://
+
+--midi=deviceName
+强制 MIDI 驱动器搜索已连接的 MIDI 设备，该设备包含指定的 MIDI 信息，包括部分匹配项，不区分大小写。deviceName
+
+--watch-worlds
+监视 VRChat SDK 构建世界的位置，并自动加入任何新创建的本地世界。
+请参阅“使用构建和测试”部分。
+
+--watch-avatars
+监视 VRChat SDK 构建测试头像的位置，如果佩戴的测试头像已更新，则自动切换到新版本。
+
+--ignore-trackers=serial1,serial2
+忽略来自具有指定序列号的设备的跟踪数据。以逗号分隔的列表。
+如果追踪器的序列号中包含空格（“ ”），则使用特殊序列号代替。例如，对应于名为“序列号”的追踪器。否则，不接受空格。%20--ignore-trackers=Serial%20Number
+
+--disable-hw-video-decoding，
+--enable-hw-video-decoding
+强制视频解码采用软件解码还是硬件解码。在 Windows 系统中，默认设置为“硬件解码”。
+警告：使用“软件”选项会占用您的 CPU 来解码视频，这可能会影响您的性能。
+大多数用户不需要使用此功能。
+
+--enable-amd-stutter-workaround
+启用一种渲染变通方法，有助于防止 AMD 显卡出现卡顿现象。
+不建议启用此变通方法，因为它可能会导致卡顿，但高级用户可以设置此标志进行测试。
+
+--osc=inPort:outIP:outPort
+自定义传入/传出 OSC 消息的网络设置。
+接受以下 3 个参数：
+inPort：VRChat 客户端应该监听传入 OSC 消息的端口。
+outIP：要发送到的 OSC 消息的 IP 地址。
+outPort：发送 OSC 消息的端口。
+
+--affinity=<ARG>
+设置 VRChat 的线程关联性，使其与指定的线程关联。`$ 16` 是一个位掩码，指示哪些线程应该用于 VRChat。例如，`$16`选择前 16 个线程，` $8` 选择前 8 个线程，依此类推。<ARG>FFFFFF
+除非您使用的是存在 CCX 间延迟问题的 AMD CPU，否则请勿使用此功能。如果误用此功能，将会严重影响您的性能。
+大多数用户无需使用此功能。 * 用户可自行决定是否使用此功能。请参阅以下部分。
+有一些工具可以帮助你计算出你的位掩码字符串应该是什么。
+对于 AMD CPU 来说，这种启动方式最为有用，因为它可以将进程限制在某些线程中，从而降低芯片上的延迟。
+这是一项高级功能。除非您清楚自己在做什么并且知道自己需要它，否则最好不要使用它！
+
+--process-priority=<ARG>
+手动将 VRChat 的进程优先级设置为指定级别。该数值表示要使用的优先级级别：<ARG>
+-2空闲优先级
+-1低于正常优先级
+0：正常优先级
+1优先级高于正常水平
+2：高优先级
+
+--main-thread-priority=<ARG>
+手动设置 VRChat 运行所在的 Unity 主线程的优先级，使其达到指定级别。该数值表示要使用的优先级：<ARG>
+-2优先级最低
+-1低于正常优先级
+0：正常优先级
+1优先级高于正常水平
+2最高优先级
+
+--enforce-world-server-checks
+手动启用服务器端世界处理。这意味着您进入的世界必须先由服务器进行处理，才能被允许进入。这对于希望调试世界是否存在未通过这些检查的情况的世界创建者来说非常有用。
