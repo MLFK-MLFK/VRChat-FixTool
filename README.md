@@ -1,7 +1,7 @@
 # VRChat-FixTool
 VRChat优化工具箱 / reshade
 
-# 程序亦在帮助不会使用高级启动项的群体
+# 程序亦在帮助简化使用高级启动项
 
 有关VRC高级启动项参考：https://docs.vrchat.com/docs/launch-options
 
