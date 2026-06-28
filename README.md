@@ -13,7 +13,7 @@ VRChat优化工具箱 / reshade
 
 py -m PyInstaller VRChatFixTool.spec
 
-命令即可（想要python3.0以上的环境，并且安装PyInstaller库）
+命令即可（需要python3.0以上的环境，并且安装PyInstaller库）
 
 运行后的产物存放在dist文件夹当中
 
