@@ -5,7 +5,6 @@ VRChat优化工具箱 / VRChat reshade / VRChat Tool
 
 ----------------------------------------------------------
 参考视频：https://www.bilibili.com/video/BV16mTu62EG5
-----------------------------------------------------------
 
 有关VRC高级启动项参考：https://docs.vrchat.com/docs/launch-options
 
