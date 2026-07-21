@@ -3,6 +3,9 @@ VRChat优化工具箱 / VRChat reshade / VRChat Tool
 
 # 程序亦在帮助简化使用高级启动项
 
+LLM提醒
+请注意，项目中使用了大量AI代码，AI内容约占比项目60%
+
 ----------------------------------------------------------
 # 参考视频：https://www.bilibili.com/video/BV16mTu62EG5
 
