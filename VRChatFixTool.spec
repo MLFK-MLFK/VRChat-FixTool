@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['VRChatHelper.pyw'],
+    ['VRChatFixTool.pyw'],
     pathex=[],
     binaries=[],
-    datas=[('dxgi.dll', '.'), ('reshade-shaders', 'reshade-shaders'), ('info.txt', '.')],
+    datas=[('dxgi.dll', '.'), ('info.txt', '.')],
     hiddenimports=['customtkinter'],
     hookspath=[],
     hooksconfig={},
@@ -21,7 +21,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='VRChatHelper',
+    name='VRC-Tool',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
