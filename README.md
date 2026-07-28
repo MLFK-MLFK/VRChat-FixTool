@@ -1,4 +1,4 @@
-# VRChat-FixTool
+# VRChat-Tool / VRC-Tool
 VRChat优化工具箱 / VRChat reshade / VRChat Tool
 
 # 程序亦在帮助简化使用高级启动项
