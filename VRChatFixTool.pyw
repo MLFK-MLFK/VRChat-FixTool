@@ -6,6 +6,7 @@ VRChat 便捷工具助手
 
 import os
 import sys
+import json
 import shutil
 import webbrowser
 import configparser
@@ -20,8 +21,8 @@ import subprocess
 # ============================================================
 # 常量
 # ============================================================
-APP_NAME = "VRC-Fix"
-VERSION = "1.2"
+APP_NAME = "VRC-Tool"
+VERSION = "1.3"
 CFG_FILE = "cfg.ini"
 TARGET_EXE = "start_protected_game.exe"
 TARGET_EXE_LOCAL = "VRChat.exe"
@@ -42,6 +43,25 @@ def get_app_dir():
 
 APP_DIR = get_app_dir()
 CFG_PATH = os.path.join(APP_DIR, CFG_FILE)
+
+# VRChat 游戏配置 JSON 路径（通用路径，不依赖用户名）
+_VRC_CONFIG_DIR = os.path.join(os.environ.get("USERPROFILE", ""),
+                                "AppData", "LocalLow", "VRChat", "VRChat")
+VRC_CONFIG_PATH = os.path.join(_VRC_CONFIG_DIR, "config.json")
+
+# 游戏参数汉化对照表
+CONFIG_TRANSLATIONS = {
+    "fpv_steadycam_fov": "FPV无人机的FOV视野大小",
+    "cache_directory": "缓存文件夹位置[确保有30GB以上的空间]",
+    "camera_spout_res_height": "直播相机分辨率-高",
+    "camera_spout_res_width": "直播相机分辨率-宽",
+    "camera_res_height": "相机分辨率-高",
+    "camera_res_width": "相机分辨率-宽",
+    "screenshot_res_height": "截图分辨率-高",
+    "screenshot_res_width": "截图分辨率-宽",
+    "cache_size": "游戏缓存大小[GB]-最低30G",
+    "cache_expiry_delay": "缓存保存时间[天]-最低30天",
+}
 
 # ℹ 信息窗口内容（从 info.txt 加载）
 def _load_info_content():
@@ -305,9 +325,9 @@ class VRChatHelperApp:
     def __init__(self):
         self.root = ctk.CTk()
         self.root.title(f"{APP_NAME} v{VERSION}")
-        self.root.geometry("540x680")
+        self.root.geometry("1050x700")
         self.root.resizable(True, True)
-        self.root.minsize(460, 700)
+        self.root.minsize(900, 500)
 
         # 窗口图标
         ico_path = os.path.join(APP_DIR, "icon.ico")
@@ -396,11 +416,18 @@ class VRChatHelperApp:
     # ---- UI 构建 ----
 
     def _build_ui(self):
-        """构建界面组件 — CustomTkinter 现代化风格"""
+        """构建界面组件 — 左侧控件 + 右侧游戏参数编辑器"""
 
-        # 主容器
-        main_frame = ctk.CTkFrame(self.root, corner_radius=12, fg_color="transparent")
-        main_frame.pack(fill=tk.BOTH, expand=True, padx=18, pady=(12, 8))
+        # 顶层容器：左右双列布局
+        top_frame = ctk.CTkFrame(self.root, fg_color="transparent")
+        top_frame.pack(fill=tk.BOTH, expand=True, padx=8, pady=(6, 4))
+        top_frame.columnconfigure(0, weight=2)  # 左列
+        top_frame.columnconfigure(1, weight=3)  # 右列（参数面板更宽）
+        top_frame.rowconfigure(0, weight=1)
+
+        # ========== 左列 ==========
+        main_frame = ctk.CTkFrame(top_frame, corner_radius=12, fg_color="transparent")
+        main_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 4))
 
         # --- 标题行 ---
         title_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
@@ -408,7 +435,7 @@ class VRChatHelperApp:
 
         ctk.CTkLabel(
             title_frame,
-            text=f"🎮  {APP_NAME}",
+            text=f"{APP_NAME}",
             font=ctk.CTkFont(family="Microsoft YaHei UI", size=18, weight="bold"),
         ).pack(side=tk.LEFT)
 
@@ -429,7 +456,7 @@ class VRChatHelperApp:
 
         ctk.CTkLabel(
             path_section,
-            text="📁  VRChat 安装路径",
+            text="VRChat 安装路径",
             font=ctk.CTkFont(size=12, weight="bold"),
             anchor="w",
         ).pack(fill=tk.X, padx=14, pady=(10, 6))
@@ -462,7 +489,7 @@ class VRChatHelperApp:
 
         ctk.CTkLabel(
             status_section,
-            text="🔍  目标程序状态",
+            text="目标程序状态",
             font=ctk.CTkFont(size=12, weight="bold"),
             anchor="w",
         ).pack(fill=tk.X, padx=14, pady=(10, 6))
@@ -480,7 +507,7 @@ class VRChatHelperApp:
 
         ctk.CTkButton(
             status_row,
-            text="🔄 刷新",
+            text="刷新",
             command=self._check_target_exe,
             width=70,
             height=32,
@@ -494,7 +521,7 @@ class VRChatHelperApp:
 
         ctk.CTkLabel(
             button_section,
-            text="🚀  启动模式",
+            text="启动模式",
             font=ctk.CTkFont(size=12, weight="bold"),
             anchor="w",
         ).pack(fill=tk.X, padx=14, pady=(10, 6))
@@ -504,7 +531,7 @@ class VRChatHelperApp:
 
         self.launch_pc_btn = ctk.CTkButton(
             btn_inner,
-            text="🖥 PC模式启动（帧率优化）/支持一键多开",
+            text="PC模式启动（帧率优化）/ 支持一键多开",
             command=self._on_launch_pc,
             height=42,
             corner_radius=8,
@@ -514,7 +541,7 @@ class VRChatHelperApp:
 
         self.launch_vr_btn = ctk.CTkButton(
             btn_inner,
-            text="🥽 VR模式启动（帧率优化）",
+            text="VR模式启动（帧率优化）",
             command=self._on_launch_vr_highfps,
             height=42,
             corner_radius=8,
@@ -526,7 +553,7 @@ class VRChatHelperApp:
 
         self.launch_local_btn = ctk.CTkButton(
             btn_inner,
-            text="🔧 本地测试模式启动",
+            text="本地测试模式启动 / NoEAC",
             command=self._on_launch_local,
             height=42,
             corner_radius=8,
@@ -555,7 +582,7 @@ class VRChatHelperApp:
 
         self.launch_custom_btn = ctk.CTkButton(
             custom_btn_row,
-            text="⚙ 自定义高级启动模式",
+            text="自定义高级启动模式",
             command=self._on_launch_custom,
             height=32,
             corner_radius=6,
@@ -597,7 +624,7 @@ class VRChatHelperApp:
 
         self.install_reshade_btn = ctk.CTkButton(
             reshade_frame,
-            text="注入 ReShade/PC拍照滤镜，VR模式请禁用",
+            text="注入 ReShade/PC拍照滤镜，VR模式有帧率损耗请禁用",
             command=self._on_install_reshade,
             height=30,
             corner_radius=6,
@@ -670,7 +697,175 @@ class VRChatHelperApp:
         )
         self.about_btn.pack(side=tk.RIGHT)
 
+        # ========== 右列：VRChat 游戏参数编辑器 ==========
+        config_frame = ctk.CTkFrame(top_frame, corner_radius=10)
+        config_frame.grid(row=0, column=1, sticky="nsew", padx=(4, 0))
+
+        ctk.CTkLabel(
+            config_frame,
+            text="VRChat配置选项",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            anchor="w",
+        ).pack(fill=tk.X, padx=14, pady=(10, 4))
+
+        ctk.CTkLabel(
+            config_frame,
+            text=VRC_CONFIG_PATH,
+            font=ctk.CTkFont(size=9),
+            text_color="gray",
+            anchor="w",
+        ).pack(fill=tk.X, padx=14, pady=(0, 6))
+
+        # 可滚动的参数列表
+        self.config_scroll = ctk.CTkScrollableFrame(config_frame, corner_radius=6)
+        self.config_scroll.pack(fill=tk.BOTH, expand=True, padx=8, pady=(0, 4))
+
+        # 保存按钮
+        btn_row = ctk.CTkFrame(config_frame, fg_color="transparent")
+        btn_row.pack(fill=tk.X, padx=8, pady=(0, 10))
+
+        ctk.CTkButton(
+            btn_row,
+            text="保存配置",
+            command=self._on_save_config,
+            height=28,
+            corner_radius=6,
+            font=ctk.CTkFont(size=11, weight="bold"),
+        ).pack(side=tk.RIGHT)
+
+        # 加载 JSON
+        self._config_entries = {}  # key -> StringVar
+        self._config_data = {}
+        self._load_config_json()
+
     # ---- 功能 ----
+
+    def _load_config_json(self):
+        """读取 VRChat config.json 并生成可编辑控件"""
+        # 清空旧条目
+        for w in self.config_scroll.winfo_children():
+            w.destroy()
+        self._config_entries.clear()
+
+        self._config_data = {}
+        if not os.path.isfile(VRC_CONFIG_PATH):
+            ctk.CTkLabel(
+                self.config_scroll,
+                text="config.json 未找到\n请先运行一次 VRChat",
+                font=ctk.CTkFont(size=11),
+                text_color="gray",
+            ).pack(pady=20)
+            return
+
+        try:
+            with open(VRC_CONFIG_PATH, "r", encoding="utf-8") as f:
+                self._config_data = json.load(f)
+        except Exception as e:
+            ctk.CTkLabel(
+                self.config_scroll,
+                text=f"读取失败: {e}",
+                font=ctk.CTkFont(size=11),
+                text_color="red",
+            ).pack(pady=20)
+            return
+
+        # 为每个顶层键生成输入行
+        for key, value in self._config_data.items():
+            self._add_config_row(key, value)
+
+    def _add_config_row(self, key, value):
+        """在滚动区域中添加一行：标签 + 可编辑输入框，附中文翻译"""
+        wrapper = ctk.CTkFrame(self.config_scroll, fg_color="transparent")
+        wrapper.pack(fill=tk.X, padx=4, pady=(3, 0))
+
+        # 上行：键名 + 编辑框
+        row_top = ctk.CTkFrame(wrapper, fg_color="transparent")
+        row_top.pack(fill=tk.X)
+
+        display_key = key if len(key) <= 24 else key[:21] + "..."
+        ctk.CTkLabel(
+            row_top,
+            text=display_key,
+            font=ctk.CTkFont(size=12),
+            width=140,
+            anchor="w",
+        ).pack(side=tk.LEFT, padx=(0, 4))
+
+        var = tk.StringVar(value=str(value))
+        self._config_entries[key] = var
+        entry = ctk.CTkEntry(
+            row_top,
+            textvariable=var,
+            height=28,
+            corner_radius=4,
+            font=ctk.CTkFont(size=12),
+        )
+        entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        # cache_directory 特殊处理：右侧加"更改"按钮
+        if key == "cache_directory":
+            ctk.CTkButton(
+                row_top,
+                text="更改",
+                command=lambda k=key, v=var: self._on_change_cache_dir(v),
+                width=50,
+                height=28,
+                corner_radius=4,
+                font=ctk.CTkFont(size=11),
+            ).pack(side=tk.RIGHT, padx=(4, 0))
+
+        # 下行：中文翻译
+        cn = CONFIG_TRANSLATIONS.get(key, "")
+        if cn:
+            ctk.CTkLabel(
+                wrapper,
+                text=f"    {cn}",
+                font=ctk.CTkFont(size=11),
+                text_color="gray",
+                anchor="w",
+            ).pack(fill=tk.X, padx=(4, 0))
+
+    def _on_change_cache_dir(self, var):
+        """更改缓存文件夹 — 弹出目录选择，写入双反斜杠路径"""
+        folder = filedialog.askdirectory(title="选择缓存文件夹 [请确保文件夹所在的磁盘有30GB以上空间]")
+        if not folder:
+            return
+        var.set(folder.replace("/", "\\"))
+
+    def _on_save_config(self):
+        """保存配置 — 将编辑值写回 config.json"""
+        if not self._config_data:
+            messagebox.showwarning("无数据", "未加载到配置数据。")
+            return
+
+        # 类型保持：尝试恢复原始类型
+        for key, var in self._config_entries.items():
+            raw = var.get()
+            original = self._config_data.get(key)
+            if isinstance(original, bool):
+                self._config_data[key] = raw.lower() in ("true", "1", "yes")
+            elif isinstance(original, int):
+                try:
+                    self._config_data[key] = int(raw)
+                except ValueError:
+                    try:
+                        self._config_data[key] = float(raw)
+                    except ValueError:
+                        self._config_data[key] = raw
+            elif isinstance(original, float):
+                try:
+                    self._config_data[key] = float(raw)
+                except ValueError:
+                    self._config_data[key] = raw
+            else:
+                self._config_data[key] = raw
+
+        try:
+            with open(VRC_CONFIG_PATH, "w", encoding="utf-8") as f:
+                json.dump(self._config_data, f, indent=4, ensure_ascii=False)
+            messagebox.showinfo("保存成功", "部分功能会在重启游戏后生效")
+        except Exception as e:
+            messagebox.showerror("保存失败", str(e))
 
     def _check_target_exe(self):
         """检测目标程序是否存在，更新 UI 状态"""
@@ -844,9 +1039,9 @@ class VRChatHelperApp:
 
         try:
             self._install_reshade_files(path)
-            messagebox.showinfo("注入完成", "ReShade 文件已复制到 VRChat 目录。")
+            messagebox.showinfo("注入完成")
         except Exception as e:
-            messagebox.showerror("注入失败", str(e))
+            messagebox.showerror("注入失败，请检查是否有足够的权限或同行文件夹是否存在", str(e))
 
     def _install_reshade_files(self, target_dir):
         """将 dxgi.dll 和 reshade-shaders 复制到目标目录"""
