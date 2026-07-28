@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-VRChat 便捷工具助手
-以 explorer.exe 为父进程启动 start_protected_game.exe
-"""
-
 import os
 import sys
 import json
