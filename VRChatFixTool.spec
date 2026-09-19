@@ -5,7 +5,7 @@ a = Analysis(
     ['VRChatFixTool.pyw'],
     pathex=[],
     binaries=[],
-    datas=[('dxgi.dll', '.'), ('info.txt', '.')],
+    datas=[('dxgi.dll', '.'), ('info.txt', '.'), ('osc_doc.txt', '.')],
     hiddenimports=['customtkinter'],
     hookspath=[],
     hooksconfig={},

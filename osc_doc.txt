@@ -1,0 +1,218 @@
+-----基础用法（先读）-----
+以下内容均为根据官方文档及个人操作撰写，如有与官方差异化，均已官方为准，如有纰漏，欢迎反馈
+
+如果您是普通的模型，地图制作开发人员那么下面提供的内容将完全够用
+如果您需要更专业的开发文档，推荐精读官方提供的开发手册
+https://docs.vrchat.com/docs/osc-overview
+
+VRCOSC
+https://github.com/VolcanicArts/VRCOSC
+
+所有参数均有大小写区分
+布尔，浮点，整型直接也有区分
+
+-----------------------------------------------------------------------
+
+例如发送
+
+/input/MoveForward 1
+
+玩家就会向前移动
+
+发送
+
+/input/MoveForward 0
+
+即停止移动，支持泛类型，其中的1和0也可以替换成true和false也是允许的
+
+不同参数对应不同效果
+
+-----------------------------------------------------------------------
+
+OSC非严格定义，OSC是支持自定义内容的
+
+OSC不具备联网能力，只在本地软件与游戏之间交互
+OSC当中“可能”包含您的不期望泄露的隐私
+请不要复制粘贴OSC的信息发送的公开场合之中
+只做本地调试使用
+
+举例在某些插件中支持OSC参数传递的场景（用于DeBug测试）：
+DeBug郊狼触发
+OSC防盗模密码锁
+OSC面捕捕捉参数
+OSC控制器输入
+OSC追踪器
+等
+
+题外话：
+VRC提供了一个有趣的使用场景
+https://github.com/ChilloutCharles/BrainFlowsIntoVRChat
+它基于脑电图 (EEG) 测量中常用频段的功率值，通过AI从脑电波中读取动作，发送您大脑的各种动作到游戏当中，控制您的VRChat角色各个行为
+
+回归正题：
+不同的插件可能会定义不同的参数，需要结合作者的定义去DeBug
+
+软件提供从OSC接口（VRChat默认9001）接收参数，用于测试
+可搭配游戏内提供的OSC调试页面查看
+
+下面只简单提供了VRChat官方内嵌的OSC命令
+
+更多有趣插件的第三方命令请自行探索
+
+-----------------------------------------------------------------------
+
+-----宏命令-----
+
+软件提供的宏操作（非官方命令，仅在本软件支持）
+
+time X
+
+即运行到此命令时会延迟 X 毫秒（ms）后再顺序执行
+
+-----------------------------------------------------------------------
+
+-----方向轴-----
+
+/input/Vertical：向前移动 (1) 或向后移动 (-1)
+
+/input/Horizontal：向右移动 (1) 或向左移动 (-1)
+
+/input/LookHorizontal：向左看和向右看。在桌面模式下，如果开启了 “舒适转向” 功能，当值为 1 时，VR 将进行快速转向。
+
+/input/UseAxisRight：使用手上的物品 - 不一定有效
+
+/input/GrabAxisRight：抓取物品 - 不一定有效
+
+/input/MoveHoldFB：向前移动 (1) 或向后移动 (-1) 所持对象
+
+/input/SpinHoldCwCcw：顺时针旋转或逆时针旋转所持对象
+
+/input/SpinHoldUD：向上或向下旋转所持对象
+
+/input/SpinHoldLR：向左或向右旋转所持对象
+
+-----------------------------------------------------------------------
+
+-----按钮-----
+
+/input/MoveForward：当此值为 1 时，向前移动。
+
+/input/MoveBackward：当此值为 1 时，向后移动。
+
+/input/MoveLeft：当此值为 1 时，向左移动。
+
+/input/MoveRight：当此值为 1 时，向右移动。
+
+/input/LookLeft：当此值为 1 时，向左转动。在桌面中视角会平滑转动，如果开启了 “舒适转向” 功能，VR 将进行快速转向。
+
+/input/LookRight：当此值为 1 时，向右转动。在桌面中视角会平滑转动，如果开启了 “舒适转向” 功能，VR 将进行快速转向。
+
+/input/Jump：如果您所在的世界支持跳跃，则该输入使您跳跃。
+
+/input/Run：如果您所在的世界支持奔跑，则该输入使您跑起来。
+
+/input/ComfortLeft：向左快转 - 仅限 VR。
+
+/input/ComfortRight：向右快转 - 仅限 VR。
+
+/input/DropRight：丢掉右手所持物品 - 仅限 VR。
+
+/input/UseRight：使用被右手高亮显示的物品 - 仅限 VR。
+
+/input/GrabRight：抓取被右手高亮显示的物品 - 仅限 VR。
+
+/input/DropLeft：丢掉左手所持物品 - 仅限 VR。
+
+/input/UseLeft：使用被左手高亮显示的物品 - 仅限 VR。
+
+/input/GrabLeft：抓取被左手高亮显示的物品 - 仅限 VR。
+
+/input/PanicButton 打开安全模式。
+
+/input/QuickMenuToggleLeft：开关快捷菜单。如果当前该输入为 “0”，则在收到 “1” 时切换。
+
+/input/QuickMenuToggleRight 打开/关闭快捷菜单。如果当前该输入为 “0”，则在收到 “1” 时切换。
+
+-----------------------------------------------------------------------
+
+-----聊天框-----
+
+/input/Voice：开关语音 - 操作取决于设置中是否打开了 “开关语音”。如果开启，那么从 0 到 1 的变化将切换静音状态。如果关闭了 “切换语音”，则其功能与按下静音类似 - 1 表示静音，0 表示取消静音。
+
+/chatbox/input s b n 在聊天框中输入文字。如果布尔参数 b 为 True，则绕过键盘立即输入并发送 s 中的文本。如果布尔数 b 为 False，则打开键盘输入框并输入所提供的文本。n 是一个额外的布尔参数，设置为 False 时不会触发通知 SFX (如果未指定，默认为 True)。
+
+/chatbox/typing b 打开或关闭打字指示器
+
+-----------------------------------------------------------------------
+
+-----模型行为-----
+
+/avatar/eyeheight 模型缩放，最小值为 0.01 米（1 厘米），最大值为 10000 米（10 公里）(注意是浮点类型，VRC游戏中可以设置的轮盘范围为0.2米-5米，如果房间设置了模型大小限制，那么将会被覆盖数值)
+
+-----------------------------------------------------------------------
+
+-----追踪器-----
+
+/tracking/trackers/1/position
+/tracking/trackers/1/rotation
+/tracking/trackers/2/position
+/tracking/trackers/2/rotation
+/tracking/trackers/3/position
+/tracking/trackers/3/rotation
+/tracking/trackers/4/position
+/tracking/trackers/4/rotation
+/tracking/trackers/5/position
+/tracking/trackers/5/rotation
+/tracking/trackers/6/position
+/tracking/trackers/6/rotation
+/tracking/trackers/7/position
+/tracking/trackers/7/rotation
+/tracking/trackers/8/position
+/tracking/trackers/8/rotation
+/tracking/trackers/head/position
+/tracking/trackers/head/rotation
+
+每个地址都接受以 3 个浮点数 (X,Y,Z) 形式表示的 Vector3 信息。这些应该是您的 OSC 跟踪器的世界空间位置和欧拉角。
+
+目前最多支持 8 个追踪器：臀部、胸部、2 个脚部、2 个膝盖、2 个肘部（上臂）。
+
+接收头数据
+
+/tracking/trackers/head/position
+/tracking/trackers/head/rotation
+    
+-----------------------------------------------------------------------
+
+-----面捕-----
+
+/tracking/eye/EyesClosedAmount
+
+/tracking/eye/CenterPitchYaw
+/tracking/eye/CenterPitchYawDist
+/tracking/eye/CenterVec
+/tracking/eye/CenterVecFull
+/tracking/eye/LeftRightPitchYaw
+/tracking/eye/LeftRightVec
+
+眼睑
+/tracking/eye/EyesClosedAmount
+
+一般来说，俯仰角和偏航角的正值分别表示向下和向右旋转。对于矢量，遵循标准的 Unity 格式：+x 向右，+y 向上，+z 向前。
+
+/tracking/eye/CenterPitchYaw
+俯仰角和偏航角（以度为单位），对应单个“中心”视线方向。由于此处未定义距离，此模式将始终使用世界内的光线投射来查找会聚距离。示例数据：-15.252, 20.128
+
+/tracking/eye/CenterPitchYawDist
+与上述相同，但增加了一个以米为单位的距离值，用于定义收敛距离。格式为：俯仰角、偏航角、距离。示例数据：-15.252、20.128、0.503
+
+/跟踪/眼睛/CenterVec
+“中心”眼睛的 x、y、z 方向归一化向量，位于头戴式显示器 (HMD) 局部区域。该向量已归一化，因此此模式始终使用光线投射来查找收敛距离。示例数据：0.332、0.263、0.905
+
+/tracking/eye/CenterVecFull
+“中心”眼睛的 x、y、z 方向向量，位于头戴式显示器 (HMD) 的局部范围内。该向量的长度很重要，它（以米为单位）将决定会聚距离。示例数据：0.167、0.132、0.456
+
+/tracking/eye/LeftRightPitchYaw
+（单位：度）左俯仰角、左偏航角、右俯仰角、右偏航角。示例数据：-14.903、23.592、-15.560、16.503
+
+/tracking/eye/LeftRightVec
+HMD 局部归一化方向向量（左眼 x,y,z，右眼 x,y,z）。示例数据：0.387, 0.257, 0.886, 0.274, 0.268, 0.923
