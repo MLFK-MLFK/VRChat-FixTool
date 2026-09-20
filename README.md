@@ -4,13 +4,15 @@ VRChat优化工具箱 / VRChat reshade / VRChat Tool
 ![UI](image/main.png)
 
 ## 内容物
-基础启动项编辑器,
-cfg配置文件编辑器,
-OSC调试器,
-Reshade安装器
+VRChat一键多开
 
-![UI](image/osc.png)
-![UI](image/cfg.png)
+基础启动项编辑器
+
+cfg配置文件编辑器
+
+OSC调试器
+
+Reshade注入安装器
 
 # 程序亦在~~帮助简化使用高级启动项~~，现已面向多功能辅助性工具箱
 
@@ -27,6 +29,10 @@ LLM提醒
 有关VRC OSC使用参考：https://github.com/VolcanicArts/VRCOSC
 
 有关Unity高级启动项参考：https://docs.unity3d.com/2022.3/Documentation/Manual/PlayerCommandLineArguments.html
+
+其他截图
+![UI](image/osc.png)
+![UI](image/cfg.png)
 
 # 如何构建
 
